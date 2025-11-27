@@ -1,9 +1,6 @@
 name: Django CI & Deploy
 
 on:
-  push:name: Django CI & Deploy
-
-on:
   push:
     branches: [ "main" ]
   pull_request:
