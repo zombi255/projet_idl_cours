@@ -8,16 +8,13 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# نسخ ملف المتطلبات من مجلد المشروع
+# نسخ ملف المتطلبات
 COPY myproject/requirements.txt /app/requirements.txt
-
-# تثبيت dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# نسخ كامل المشروع
+# نسخ المشروع كله
 COPY myproject/ /app/
 
+# تشغيل Django على المنفذ الذي يوفره Render
+CMD ["sh", "-c", "python manage.py runserver 0.0.0.0:$PORT"]
 
-
-# تشغيل الخادم باستخدام PORT الذي يوفره Render
-CMD ["sh", "-c", "python manage.py runserver 0.0.0.0:9090"]
