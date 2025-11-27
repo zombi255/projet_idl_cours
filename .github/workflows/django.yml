@@ -44,15 +44,8 @@ jobs:
 
     - name: Build Docker Image
       run: |
-        # إذا كان Dockerfile في جذر المشروع
-        if [ -f Dockerfile ]; then
-          docker build -t django-app .
-        fi
-
-        # إذا كان Dockerfile داخل myproject/
-        if [ -f myproject/Dockerfile ]; then
-          docker build -f myproject/Dockerfile -t django-app .
-        fi
+          # استخدم Dockerfile الموجود في myproject/
+           docker build -f myproject/Dockerfile -t django-app .
 
 
     - name: Run Docker Container
