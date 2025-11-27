@@ -28,6 +28,7 @@ jobs:
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         if [ -f myproject/requirements.txt ]; then pip install -r myproject/requirements.txt; fi
+        pip install dj-database-url psycopg2-binary  # للتعامل مع قاعدة PostgreSQL على Render
 
     # 4️⃣ Run migrations
     - name: Run migrations
@@ -47,9 +48,9 @@ jobs:
     # 7️⃣ Build Docker image
     - name: Build Docker Image
       run: |
-        docker build -t django-app .
+        docker build -f myproject/Dockerfile -t django-app .
 
-    # 8️⃣ Run Docker container (optional, for testing)
+    # 8️⃣ Run Docker container (اختياري لاختبار)
     - name: Run Docker Container
       run: |
         docker run -d -p 8000:8000 --name django-app-test django-app
@@ -59,4 +60,11 @@ jobs:
     # 9️⃣ Deploy to Render
     - name: Deploy to Render
       run: |
+        # نشر الحاوية على Render
         curl -X POST "https://api.render.com/deploy/srv-d4k83sbuibrs73fatdt0?key=rnd_q3BUcT9zhiOIuzP0YlaPgXUnyZqJ"
+        
+        # استعادة dump.sql إلى قاعدة Render (إذا كان متوفرًا)
+        # يمكن رفع dump.sql كـ artifact أو سحابة ثم تنزيله هنا
+        # مثال:
+        # curl -O https://my-bucket.s3.amazonaws.com/dump.sql
+        # psql $RENDER_DATABASE_URL < dump.sql
