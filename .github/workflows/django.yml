@@ -46,7 +46,6 @@ jobs:
       run: |
         python myproject/manage.py test cours --settings=myproject.settings_test --verbosity=2
 
-    # 7️⃣ Verify Dockerfile exists
     - name: Verify Dockerfile
       run: |
         echo "Listing files in myproject/"
@@ -60,13 +59,6 @@ jobs:
     - name: Build Docker Image
       run: |
         docker build -f myproject/Dockerfile -t django-app .
-
-    # 🔟 Run Docker container (optional for testing)
-    - name: Run Docker Container
-      run: |
-        docker run -d -p 8000:8000 --name django-app-test django-app
-        sleep 10
-        docker ps -a
 
     # 1️⃣1️⃣ Deploy to Render
     - name: Deploy to Render
