@@ -28,7 +28,7 @@ jobs:
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         if [ -f myproject/requirements.txt ]; then pip install -r myproject/requirements.txt; fi
-        pip install dj-database-url psycopg2-binary  # للتعامل مع قاعدة PostgreSQL على Render
+        pip install dj-database-url psycopg2-binary
 
     # 4️⃣ Run migrations
     - name: Run migrations
@@ -59,12 +59,19 @@ jobs:
 
     # 9️⃣ Deploy to Render
     - name: Deploy to Render
+      env:
+        DATABASE_URL: ${{ secrets.RENDER_DATABASE_URL }}
       run: |
         # نشر الحاوية على Render
         curl -X POST "https://api.render.com/deploy/srv-d4k83sbuibrs73fatdt0?key=rnd_q3BUcT9zhiOIuzP0YlaPgXUnyZqJ"
         
         # استعادة dump.sql إلى قاعدة Render (إذا كان متوفرًا)
-        # يمكن رفع dump.sql كـ artifact أو سحابة ثم تنزيله هنا
-        # مثال:
-        # curl -O https://my-bucket.s3.amazonaws.com/dump.sql
-        # psql $RENDER_DATABASE_URL < dump.sql
+        if [ -f dump.sql ]; then
+          echo "Restoring database dump..."
+          PGPASSWORD=$(echo $DATABASE_URL | cut -d':' -f3 | cut -d'@' -f1)
+          PGHOST=$(echo $DATABASE_URL | cut -d'@' -f2 | cut -d':' -f1)
+          PGPORT=$(echo $DATABASE_URL | cut -d':' -f4 | cut -d'/' -f1)
+          PGUSER=$(echo $DATABASE_URL | cut -d':' -f2 | cut -d'/' -f1)
+          PGDATABASE=$(echo $DATABASE_URL | cut -d'/' -f2)
+          psql "postgresql://$PGUSER:$PGPASSWORD@$PGHOST:$PGPORT/$PGDATABASE" < dump.sql
+        fi
