@@ -25,7 +25,15 @@ SECRET_KEY = 'django-insecure-k8zdvx-51v1gknd5-_$d98mxmipemayzx)^8t2i^dv(!u*f9&*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+import os
+
+ALLOWED_HOSTS = [
+    "projet-idl-cours.onrender.com",  # اسم النطاق على Render
+]
+
+# للبيئة التطويرية فقط
+if os.environ.get("DEBUG", "True") == "True":
+    ALLOWED_HOSTS.append("*")
 
 
 # Application definition
