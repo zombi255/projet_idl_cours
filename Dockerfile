@@ -15,6 +15,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 # نسخ المشروع كله
 COPY myproject/ /app/
 
+Copy entrypoint and set it
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
 # تشغيل Django على المنفذ الذي يوفره Render
 CMD ["sh", "-c", "python manage.py runserver 0.0.0.0:$PORT"]
+
+
 
